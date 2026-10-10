@@ -10,4 +10,4 @@ Verified locally on October 10, 2026. Browser checks used fictional habits and n
 
 Automated tests cover invalid backup rejection; file-picker restore was tested with a valid exported backup. Browser storage quota failures, blocked storage, simultaneous-tab writes, and midnight rollover have handling in the implementation but were not independently fault-injected. This is a development verification record, not an independent security audit.
 
-The website has not been deployed. The preview contains optional fictional sample habits stored only in its browser origin; a fresh browser origin starts empty. The source repository contains no browser-local progress or backups.
+The GitHub Pages workflow publishes only the six allowlisted application assets in `dist`. The preview contains optional fictional sample habits stored only in its browser origin; a fresh browser origin starts empty. The source repository contains no browser-local progress or backups. Deployment results are recorded in the repository's Actions history.

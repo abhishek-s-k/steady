@@ -2,6 +2,14 @@
 
 A quiet, local-first habit tracker. Plain HTML, CSS, and browser JavaScript. No accounts, Node.js, build step, framework, dependencies, external fonts, or analytics.
 
+## Use the website
+
+Open **https://abhishek-s-k.github.io/steady/**. No installation or GitHub account is needed. Each browser has independent local progress; the hosted app does not upload habit names, to-do items, check-ins, or nicknames. To move existing localhost progress to the website, export a backup from My space locally, then import it into My space on the website. Backups remain on your device.
+
+GitHub Pages serves the public application over HTTPS. GitHub logs visitors' IP addresses for security purposes, as described in [its Pages documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection). The app adds no analytics or tracking.
+
+The deployment workflow runs when website files change on `main`, or manually from the Actions tab. Official GitHub Actions are pinned to immutable commits and use separate read-only packaging and narrowly scoped deployment permissions. `scripts/check_dist.py` refuses publication unless `dist` contains exactly the six reviewed static assets; only that folder is uploaded. The launcher, tests, repository metadata, and browser backups are not part of the hosted artifact.
+
 ## Run locally
 
 **Windows:** double-click `Start-Steady.cmd`. It finds Python automatically (including Codex's bundled Python, when available), starts the local server, and prints the address to open. Keep the terminal open while using the app.
@@ -50,7 +58,7 @@ Sharing the source with friends shares only the application. Each person has an 
 - Saves detect conflicting writes from other tabs; quota and corrupt-storage errors are surfaced without silently overwriting saved history.
 - `.gitignore` excludes the app's standard backup filenames, private/data/backup folders, environment files, and logs. Renamed files can bypass ignore patterns, so inspect your changes before committing. No actual habit data is included in the source.
 
-This is a local personal tool, not a multi-user service. Website deployment would require a separate hosting review and appropriate response headers; no deployment is configured. Sharing the source on GitHub does not publish the website or share browser-local progress. Static hosting would still give each visitor separate browser-local data.
+This is a personal tool with browser-local storage. The hosted version serves the same static app and gives each visitor independent browser-local data. The local Python server's additional response headers apply only to localhost; GitHub Pages controls hosted response headers. The app's HTML Content Security Policy and referrer policy remain in effect when hosted. GitHub Pages does not provide our custom anti-framing response header, so the hosted app should not be used for sensitive information. Browser storage is shared by origin: other applications hosted on the same `abhishek-s-k.github.io` origin must also be trusted. A separate custom domain would provide a separate origin if needed in the future.
 
 ## Project structure
 
@@ -65,6 +73,8 @@ dist/                  Static application; no build needed
 serve.py               Optional Python standard-library local launcher
 Start-Steady.cmd        Windows launcher with Python discovery
 tests/                 Date/schema and server regression checks
+scripts/check_dist.py  Publication allowlist check
+.github/workflows/     GitHub Pages deployment configuration
 ```
 
 ## Development checks
