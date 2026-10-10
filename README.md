@@ -4,11 +4,11 @@ A quiet, local-first habit tracker. Plain HTML, CSS, and browser JavaScript. No 
 
 ## Use the website
 
-Open **https://abhishek-s-k.github.io/steady/**. No installation or GitHub account is needed. Each browser has independent local progress; the hosted app does not upload habit names, to-do items, check-ins, or nicknames. To move existing localhost progress to the website, export a backup from My space locally, then import it into My space on the website. Backups remain on your device.
+GitHub Pages has been disabled; the public source repository remains available. Cloudflare Pages deployment is being configured. No installation or GitHub account will be needed to use the website. Each browser has independent local progress; the hosted app does not upload habit names, to-do items, check-ins, or nicknames. To move progress between addresses, export a backup from My space at the old address, then import it into My space at the new address. Backups remain on your device. If the old site is unavailable, its browser storage has not been deleted; temporarily republishing the same app at the old address allows exporting it.
 
-GitHub Pages serves the public application over HTTPS. GitHub logs visitors' IP addresses for security purposes, as described in [its Pages documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection). The app adds no analytics or tracking.
+Cloudflare Pages serves the public application over HTTPS. Cloudflare processes network request information to deliver the site; habit data stays in the browser. The app adds no analytics or tracking.
 
-The deployment workflow runs when website files change on `main`, or manually from the Actions tab. Official GitHub Actions are pinned to immutable commits and use separate read-only packaging and narrowly scoped deployment permissions. `scripts/check_dist.py` refuses publication unless `dist` contains exactly the six reviewed static assets; only that folder is uploaded. The launcher, tests, repository metadata, and browser backups are not part of the hosted artifact.
+Cloudflare Pages configuration: connect only the `steady` repository, use production branch `main`, framework preset **None**, build command `python3 scripts/check_dist.py`, build output directory `dist`, and the repository root as the root directory. No environment variables, secrets, database, Functions, or analytics are needed. Cloudflare's Git integration deploys automatically after pushes. `scripts/check_dist.py` refuses publication unless `dist` contains exactly the six reviewed static assets and `_headers` security configuration; only that folder is published. The launcher, tests, repository metadata, and browser backups are not part of the hosted artifact. GitHub Actions only validates files with read-only permissions and cannot deploy or re-enable GitHub Pages. See [Cloudflare's Git integration guide](https://developers.cloudflare.com/pages/get-started/git-integration/).
 
 ## Run locally
 
@@ -58,7 +58,7 @@ Sharing the source with friends shares only the application. Each person has an 
 - Saves detect conflicting writes from other tabs; quota and corrupt-storage errors are surfaced without silently overwriting saved history.
 - `.gitignore` excludes the app's standard backup filenames, private/data/backup folders, environment files, and logs. Renamed files can bypass ignore patterns, so inspect your changes before committing. No actual habit data is included in the source.
 
-This is a personal tool with browser-local storage. The hosted version serves the same static app and gives each visitor independent browser-local data. The local Python server's additional response headers apply only to localhost; GitHub Pages controls hosted response headers. The app's HTML Content Security Policy and referrer policy remain in effect when hosted. GitHub Pages does not provide our custom anti-framing response header, so the hosted app should not be used for sensitive information. Browser storage is shared by origin: other applications hosted on the same `abhishek-s-k.github.io` origin must also be trusted. A separate custom domain would provide a separate origin if needed in the future.
+This is a personal tool with browser-local storage. The hosted version serves the same static app and gives each visitor independent browser-local data. Cloudflare Pages reads `dist/_headers` to apply the Content Security Policy, anti-framing, MIME, referrer, cross-origin, and feature restrictions. The HTML policy remains as an additional fallback. Browser storage is isolated by origin, so a new Pages hostname starts with empty progress. No habits or nicknames are copied to the hosting provider during migration.
 
 ## Project structure
 
@@ -70,11 +70,12 @@ dist/                  Static application; no build needed
   core.mjs             Date, streak, and backup validation logic
   icons.svg            Local SVG icon symbols
   favicon.svg          Local favicon
+  _headers             Cloudflare Pages security response headers
 serve.py               Optional Python standard-library local launcher
 Start-Steady.cmd        Windows launcher with Python discovery
 tests/                 Date/schema and server regression checks
 scripts/check_dist.py  Publication allowlist check
-.github/workflows/     GitHub Pages deployment configuration
+.github/workflows/     Read-only publication allowlist validation
 ```
 
 ## Development checks
