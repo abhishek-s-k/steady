@@ -4,11 +4,13 @@ A quiet, local-first habit tracker. Plain HTML, CSS, and browser JavaScript. No 
 
 ## Use the website
 
-GitHub Pages has been disabled; the public source repository remains available. Cloudflare Pages deployment is being configured. No installation or GitHub account will be needed to use the website. Each browser has independent local progress; the hosted app does not upload habit names, to-do items, check-ins, or nicknames. To move progress between addresses, export a backup from My space at the old address, then import it into My space at the new address. Backups remain on your device. If the old site is unavailable, its browser storage has not been deleted; temporarily republishing the same app at the old address allows exporting it.
+Open **https://steady-habits.pages.dev/**. GitHub Pages has been disabled; the public source repository remains available. No installation or GitHub account is needed to use the website. Each browser has independent local progress; the hosted app does not upload habit names, to-do items, check-ins, or nicknames. To move progress between addresses, export a backup from My space at the old address, then import it into My space at the new address. Backups remain on your device. If the old site is unavailable, its browser storage has not been deleted; temporarily republishing the same app at the old address allows exporting it.
 
 Cloudflare Pages serves the public application over HTTPS. Cloudflare processes network request information to deliver the site; habit data stays in the browser. The app adds no analytics or tracking.
 
-Cloudflare Pages configuration: connect only the `steady` repository, use production branch `main`, framework preset **None**, build command `python3 scripts/check_dist.py`, build output directory `dist`, and the repository root as the root directory. No environment variables, secrets, database, Functions, or analytics are needed. Cloudflare's Git integration deploys automatically after pushes. `scripts/check_dist.py` refuses publication unless `dist` contains exactly the six reviewed static assets and `_headers` security configuration; only that folder is published. The launcher, tests, repository metadata, and browser backups are not part of the hosted artifact. GitHub Actions only validates files with read-only permissions and cannot deploy or re-enable GitHub Pages. See [Cloudflare's Git integration guide](https://developers.cloudflare.com/pages/get-started/git-integration/).
+Cloudflare Pages uses **Direct Upload**, with no GitHub app or repository access granted. No environment variables, secrets, database, Functions, or analytics are needed. GitHub pushes update the public source only; publishing website changes is a separate manual step. `scripts/check_dist.py` refuses publication unless `dist` contains exactly the six reviewed static assets and `_headers` security configuration; only that folder is published. The launcher, tests, repository metadata, and browser backups are not part of the hosted artifact. GitHub Actions only validates files with read-only permissions and cannot deploy or re-enable GitHub Pages.
+
+To publish an update, run `python scripts/package_site.py`. It checks the publication allowlist and creates the ignored `test-results/steady-site.zip` with the website files at the archive root. In Cloudflare's **Workers & Pages → steady-habits → Create deployment**, select **Production**, upload this ZIP, and deploy. Never upload the repository folder or a habit backup. Direct Upload projects cannot switch to Git integration in place; using Git integration later requires a new project. See [Cloudflare's Direct Upload guide](https://developers.cloudflare.com/pages/get-started/direct-upload/).
 
 ## Run locally
 
@@ -75,6 +77,7 @@ serve.py               Optional Python standard-library local launcher
 Start-Steady.cmd        Windows launcher with Python discovery
 tests/                 Date/schema and server regression checks
 scripts/check_dist.py  Publication allowlist check
+scripts/package_site.py  Validate and create the public website upload ZIP
 .github/workflows/     Read-only publication allowlist validation
 ```
 
