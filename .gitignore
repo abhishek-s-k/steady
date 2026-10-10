@@ -1,0 +1,17 @@
+# Progress is kept in browser storage. Never commit exported backups.
+steady-backup*.json
+*.steady.json
+backups/
+data/
+private/
+*.log
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+test-results/

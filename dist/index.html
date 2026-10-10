@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A quiet, local-first space for building daily habits.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+  <meta name="color-scheme" content="light">
+  <title>Steady — Your habits, one day at a time</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#home"><svg aria-hidden="true"><use href="icons.svg#sprout"></use></svg>steady<span class="brand-dot">.</span></a>
+      <p class="sidebar-caption">A LITTLE, EVERY DAY</p>
+      <nav>
+        <a class="nav-link" href="#home" id="nav-home"><svg aria-hidden="true"><use href="icons.svg#grid"></use></svg>My habits<span id="nav-count" class="nav-count">0</span></a>
+        <a class="nav-link" href="#profile" id="nav-profile"><svg aria-hidden="true"><use href="icons.svg#user"></use></svg>My space</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="quiet-note"><svg aria-hidden="true"><use href="icons.svg#leaf"></use></svg><p>Small steps.<br>Lasting change.</p></div>
+        <div class="local-indicator"><span></span>Saved on this browser</div>
+        <a class="sidebar-profile" href="#profile"><span class="avatar" id="sidebar-avatar">H</span><span><strong id="sidebar-name">Habit keeper</strong><small>Your personal space</small></span><span aria-hidden="true">↗</span></a>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar"><span id="breadcrumb">My habits</span><div><svg aria-hidden="true"><use href="icons.svg#calendar"></use></svg><time id="header-date"></time></div></header>
+      <main id="main" tabindex="-1"></main>
+      <footer class="page-footer"><span>Made for the everyday.</span><span>No accounts. No tracking. Just you.</span></footer>
+    </div>
+  </div>
+  <div id="storage-banner" class="storage-banner" role="alert" hidden></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="day-tooltip" class="day-tooltip" role="tooltip" hidden></div>
+  <dialog id="habit-dialog" aria-labelledby="habit-dialog-title">
+    <form id="habit-form">
+      <div class="dialog-header"><div><p class="eyebrow">MAKE ROOM FOR A GOOD HABIT</p><h2 id="habit-dialog-title">New habit</h2></div><button type="button" class="icon-button" data-close="habit-dialog" aria-label="Close dialog">×</button></div>
+      <label for="habit-name">Habit name</label><input id="habit-name" name="name" required maxlength="80" placeholder="e.g. Read a few pages" autocomplete="off">
+      <div class="form-row"><div><label for="habit-priority">Priority</label><select id="habit-priority" name="priority"><option value="p1">P1 · High</option><option value="p2" selected>P2 · Medium</option><option value="p3">P3 · Low</option></select></div><div><label for="habit-goal">Goal length <span class="optional">(days)</span></label><input id="habit-goal" name="goal" type="number" min="1" max="3650" step="1" value="21" required></div></div>
+      <p class="field-hint">Day 1 is the day you create the habit. The goal date gets a ring on your calendar.</p>
+      <fieldset class="color-field"><legend>Accent color</legend><div id="color-options" class="color-options"></div></fieldset>
+      <p id="habit-form-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button type="button" class="button secondary" data-close="habit-dialog">Cancel</button><button class="button primary" type="submit">Save habit</button></div>
+    </form>
+  </dialog>
+  <dialog id="completion-dialog" aria-labelledby="completion-dialog-title">
+    <form id="completion-form"><div class="dialog-header"><div><p class="eyebrow">TODAY’S SMALL WIN</p><h2 id="completion-dialog-title">Check in</h2></div><button type="button" class="icon-button" data-close="completion-dialog" aria-label="Close dialog">×</button></div>
+      <p id="completion-subtitle" class="muted"></p><div id="completion-items" class="completion-items"></div><p class="field-hint">Select what you did. You can also check in without selecting an item.</p>
+      <p id="completion-form-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions split"><button id="undo-completion" type="button" class="text-button danger" hidden>Undo today’s check-in</button><div><button type="button" class="button secondary" data-close="completion-dialog">Cancel</button><button type="submit" class="button primary">Save check-in</button></div></div>
+    </form>
+  </dialog>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title"><div class="dialog-header"><h2 id="confirm-title">Are you sure?</h2><button type="button" class="icon-button" data-close="confirm-dialog" aria-label="Close dialog">×</button></div><p id="confirm-message" class="muted"></p><div class="dialog-actions"><button type="button" class="button secondary" data-close="confirm-dialog">Cancel</button><button type="button" id="confirm-action" class="button primary">Confirm</button></div></dialog>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+</body>
+</html>
