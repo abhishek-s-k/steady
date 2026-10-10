@@ -10,8 +10,9 @@ Verified locally on October 10, 2026. Browser checks used fictional habits and n
 
 Automated tests cover invalid backup rejection; file-picker restore was tested with a valid exported backup. Browser storage quota failures, blocked storage, simultaneous-tab writes, and midnight rollover have handling in the implementation but were not independently fault-injected. This is a development verification record, not an independent security audit.
 
-The GitHub Pages workflow publishes only the six allowlisted application assets in `dist`. The preview contains optional fictional sample habits stored only in its browser origin; a fresh browser origin starts empty. The source repository contains no browser-local progress or backups. Deployment results are recorded in the repository's Actions history.
-# Cloudflare Pages migration — October 10, 2026
+The original GitHub Pages workflow published only the six allowlisted application assets in `dist`; that hosting was subsequently disabled as recorded below. The preview contained optional fictional sample habits stored only in its browser origin; a fresh browser origin starts empty. The source repository contains no browser-local progress or backups. Original deployment results remain in the repository's Actions history.
+
+## Cloudflare Pages migration — October 10, 2026
 
 - Production: https://steady-habits.pages.dev/
 - GitHub Pages disabled; old public URL returns HTTP 404. Source repository retained.
@@ -21,4 +22,3 @@ The GitHub Pages workflow publishes only the six allowlisted application assets 
 - Live browser checks: home, new-habit dialog (cancelled), profile, and return navigation. No warnings or errors in the browser console; no test habits or personal data added.
 - Publication allowlist passed; five local server tests passed outside the sandbox with loopback access.
 - Future source pushes do not publish automatically. `python scripts/package_site.py` produces the validated, ignored ZIP for a new Cloudflare production upload.
-
