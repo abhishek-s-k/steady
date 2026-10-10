@@ -6,7 +6,7 @@
   <meta name="description" content="A quiet, local-first space for building daily habits.">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
   <title>Steady — Your habits, one day at a time</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -19,19 +19,18 @@
       <a class="brand" href="#home"><svg aria-hidden="true"><use href="icons.svg#sprout"></use></svg>steady<span class="brand-dot">.</span></a>
       <p class="sidebar-caption">A LITTLE, EVERY DAY</p>
       <nav>
-        <a class="nav-link" href="#home" id="nav-home"><svg aria-hidden="true"><use href="icons.svg#grid"></use></svg>My habits<span id="nav-count" class="nav-count">0</span></a>
-        <a class="nav-link" href="#profile" id="nav-profile"><svg aria-hidden="true"><use href="icons.svg#user"></use></svg>My space</a>
+        <a class="nav-link" href="#home" id="nav-home" aria-label="My habits" title="My habits"><svg aria-hidden="true"><use href="icons.svg#grid"></use></svg><span id="nav-count" class="nav-count">0</span></a>
+        <a class="nav-link" href="#profile" id="nav-profile" aria-label="My space" title="My space"><svg aria-hidden="true"><use href="icons.svg#user"></use></svg></a>
       </nav>
       <div class="sidebar-bottom">
         <div class="quiet-note"><svg aria-hidden="true"><use href="icons.svg#leaf"></use></svg><p>Small steps.<br>Lasting change.</p></div>
-        <div class="local-indicator"><span></span>Saved on this browser</div>
-        <a class="sidebar-profile" href="#profile"><span class="avatar" id="sidebar-avatar">H</span><span><strong id="sidebar-name">Habit keeper</strong><small>Your personal space</small></span><span aria-hidden="true">↗</span></a>
+        <div class="local-indicator"><span></span>Saved in this browser</div>
+        <a class="sidebar-profile" href="#profile"><span class="avatar" id="sidebar-avatar">H</span><span><strong id="sidebar-name">Habit keeper</strong></span><span aria-hidden="true">↗</span></a>
       </div>
     </aside>
     <div class="workspace">
-      <header class="topbar"><span id="breadcrumb">My habits</span><div><svg aria-hidden="true"><use href="icons.svg#calendar"></use></svg><time id="header-date"></time></div></header>
+      <header class="topbar"><span id="breadcrumb" hidden></span><div><svg aria-hidden="true"><use href="icons.svg#calendar"></use></svg><time id="header-date"></time></div><button id="theme-toggle" type="button" class="icon-button theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode"></button></header>
       <main id="main" tabindex="-1"></main>
-      <footer class="page-footer"><span>Made for the everyday.</span><span>No accounts. No tracking. Just you.</span></footer>
     </div>
   </div>
   <div id="storage-banner" class="storage-banner" role="alert" hidden></div>
@@ -56,6 +55,13 @@
     </form>
   </dialog>
   <dialog id="confirm-dialog" aria-labelledby="confirm-title"><div class="dialog-header"><h2 id="confirm-title">Are you sure?</h2><button type="button" class="icon-button" data-close="confirm-dialog" aria-label="Close dialog">×</button></div><p id="confirm-message" class="muted"></p><div class="dialog-actions"><button type="button" class="button secondary" data-close="confirm-dialog">Cancel</button><button type="button" id="confirm-action" class="button primary">Confirm</button></div></dialog>
+  <dialog id="nickname-dialog" aria-labelledby="nickname-title">
+    <form id="nickname-form">
+      <div class="dialog-header"><h2 id="nickname-title">Edit nickname</h2><button type="button" class="icon-button" data-close="nickname-dialog" aria-label="Close dialog">×</button></div>
+      <label for="nickname">Nickname</label><input id="nickname" maxlength="32" required autocomplete="off">
+      <div class="dialog-actions"><button type="button" class="button secondary" data-close="nickname-dialog">Cancel</button><button type="submit" class="button primary">Save nickname</button></div>
+    </form>
+  </dialog>
   <input id="import-file" type="file" accept="application/json,.json" hidden>
 </body>
 </html>

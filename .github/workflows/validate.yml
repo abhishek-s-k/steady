@@ -6,11 +6,15 @@ on:
     paths:
       - 'dist/**'
       - 'scripts/check_dist.py'
+      - 'tests/**'
+      - 'serve.py'
       - '.github/workflows/validate.yml'
   pull_request:
     paths:
       - 'dist/**'
       - 'scripts/check_dist.py'
+      - 'tests/**'
+      - 'serve.py'
       - '.github/workflows/validate.yml'
   workflow_dispatch:
 
@@ -28,3 +32,9 @@ jobs:
           persist-credentials: false
       - name: Verify publication allowlist
         run: python3 scripts/check_dist.py
+      - name: Check application syntax and behavior
+        run: |
+          node --check dist/app.mjs
+          node --test tests/core.test.mjs
+      - name: Check local server protections
+        run: python3 -m unittest discover -s tests -p "test_*.py"

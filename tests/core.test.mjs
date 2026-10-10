@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {dateKey, parseDay, addDays, isDay, goalDate, currentStreak, bestStreak, monthKeys, freshData, validateData} from '../dist/core.mjs';
+import {COLORS, greeting, dateKey, parseDay, addDays, isDay, goalDate, currentStreak, bestStreak, monthKeys, freshData, validateData} from '../dist/core.mjs';
 
 const habit = (entries = {}) => ({id:'habit-1',name:'Read',priority:'p2',color:'sage',goalDays:3,createdOn:'2026-10-10',todos:[{id:'task-1',text:'One chapter'}],entries});
 const checked = (keys) => Object.fromEntries(keys.map(key=>[key,{items:[]}]));
@@ -63,4 +63,12 @@ test('invalid imports reject versions, duplicate IDs, future records, and malfor
 test('prototype properties in a parsed backup are never copied',()=>{
   const raw = JSON.parse(JSON.stringify(backup(habit())).replace('"version":1','"__proto__":{"polluted":true},"version":1'));
   const clean = validateData(raw,'2026-10-10');assert.equal(Object.hasOwn(clean,'__proto__'),false);assert.equal({}.polluted,undefined);
+});
+test('greeting follows local morning, afternoon and evening boundaries',()=>{
+  for (const [hour,text] of [[0,'Good morning'],[11,'Good morning'],[12,'Good afternoon'],[16,'Good afternoon'],[17,'Good evening'],[23,'Good evening']]) assert.equal(greeting(hour),text);
+});
+test('all twelve supported accents survive backup validation without accepting arbitrary CSS',()=>{
+  assert.equal(Object.keys(COLORS).length,12);
+  for (const color of Object.keys(COLORS)) assert.equal(validateData(backup({...habit(),color}),'2026-10-10').habits[0].color,color);
+  for (const color of ['constructor','__proto__','url(https://example.test)','mint extra']) assert.throws(()=>validateData(backup({...habit(),color}),'2026-10-10'));
 });

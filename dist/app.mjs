@@ -1,4 +1,4 @@
-import {STORAGE_KEY, COLORS, LIMITS, dateKey, parseDay, addDays, goalDate, currentStreak, bestStreak, monthKeys, freshData, validateData} from './core.mjs';
+import {STORAGE_KEY, COLORS, LIMITS, greeting, dateKey, parseDay, addDays, goalDate, currentStreak, bestStreak, monthKeys, freshData, validateData} from './core.mjs';
 
 const $ = selector => document.querySelector(selector);
 const main = $('#main');
@@ -146,7 +146,9 @@ function stat(value, label, iconName, note) {
 }
 function pageHeading(eyebrow, title, subtitle, action) {
   const row = el('div', 'page-heading'), text = el('div');
-  text.append(el('p', 'eyebrow', eyebrow), el('h1', '', title), el('p', 'page-subtitle', subtitle)); row.append(text);
+  if (eyebrow) text.append(el('p', 'eyebrow', eyebrow));
+  text.append(el('h1', '', title));
+  if (subtitle) text.append(el('p', 'page-subtitle', subtitle)); row.append(text);
   if (action) row.append(action); return row;
 }
 
@@ -226,7 +228,8 @@ function renderHabitGrid() {
   $('#habit-visible-count').textContent = plural(habits.length, 'habit');
 }
 function home() {
-  main.append(pageHeading('YOUR DAILY PRACTICE', 'One day at a time.', 'A little consistency goes a long way.', button('New habit', 'button primary', () => openHabit(), 'plus')));
+  const heading = pageHeading('', greeting(), '', button('New habit', 'button primary', () => openHabit(), 'plus'));
+  heading.querySelector('h1').id = 'time-greeting'; main.append(heading);
   const completed = data.habits.filter(h => h.entries[today()]).length;
   const stats = el('section', 'stats-grid'); stats.setAttribute('aria-label', 'Habit overview');
   stats.append(stat(data.habits.length, 'Active habits', 'sprout', 'small commitments'), stat(`${completed} / ${data.habits.length}`, 'Completed today', 'check', completed && completed === data.habits.length ? 'a good day’s work' : 'at your own pace'), stat(Math.max(0, ...data.habits.map(h => currentStreak(h))), 'Longest current streak', 'flame', 'days in a row'));
@@ -324,15 +327,22 @@ function renderTodos(panel,habit) {
   }
   panel.append(list);
 }
+$('#nickname-form').addEventListener('submit', event => {
+  event.preventDefault(); const input = $('#nickname'), nickname = input.value.trim();
+  if (!nickname) { input.setCustomValidity('Choose a nickname.'); input.reportValidity(); return; }
+  if (update(next => {next.nickname = nickname;})) { $('#nickname-dialog').close(); toast('Nickname saved in this browser.'); }
+});
+$('#nickname').addEventListener('input', () => $('#nickname').setCustomValidity(''));
 function profile() {
-  main.append(pageHeading('YOUR PERSONAL SPACE','A practice that’s yours.','A nickname, a little perspective, and your progress in one place.'));
-  const profileCard = el('section','profile-card'), avatar = el('span','avatar large',data.nickname.slice(0,1).toUpperCase());
-  const info = el('div','profile-info'); info.append(el('h2','',data.nickname),el('p','muted','Local profile · No account needed'));
-  const form = el('form','nickname-form'), input = el('input'); input.value = data.nickname; input.maxLength = 32; input.required = true; input.autocomplete = 'off'; input.id = 'nickname';
-  const label = el('label','','Nickname'); label.htmlFor = 'nickname'; const field = el('div');field.append(label,input);
-  const submit = el('button','button secondary','Save nickname'); submit.type = 'submit';form.append(field,submit);
-  form.addEventListener('submit',event => {event.preventDefault(); const nickname = input.value.trim();if(!nickname){input.setCustomValidity('Choose a nickname.');input.reportValidity();return;}if(update(next => {next.nickname = nickname;}))toast('Nickname saved on this browser.');});input.addEventListener('input',()=>input.setCustomValidity(''));
-  profileCard.append(avatar,info,form);main.append(profileCard);
+  const greetingRow = el('div', 'page-heading profile-greeting');
+  const avatar = el('span', 'avatar large', data.nickname.slice(0,1).toUpperCase());
+  const title = el('h1', '', `Hi ${data.nickname}!`);
+  const edit = button('', 'icon-button', () => {
+    $('#nickname').value = data.nickname; $('#nickname').setCustomValidity('');
+    $('#nickname-dialog').showModal(); $('#nickname').focus(); $('#nickname').select();
+  }, 'edit');
+  edit.id = 'edit-nickname'; edit.setAttribute('aria-label','Edit nickname'); edit.title = 'Edit nickname';
+  greetingRow.append(avatar, title, edit); main.append(greetingRow);
   const stats = el('section','stats-grid'); const total = data.habits.reduce((sum,h) => sum + Object.keys(h.entries).length,0);
   let opportunities = 0, completed = 0;
   for (const h of data.habits) for(let n = 0;n < 30;n++) {const day = addDays(today(),-n);if(day >= h.createdOn){opportunities++;if(h.entries[day])completed++;}}
@@ -359,6 +369,26 @@ $('#import-file').addEventListener('change',async event => {
     confirm('Restore this backup?',`Replace your current space with ${plural(imported.habits.length,'habit')} from this backup? Export your current data first if you want to keep it.`,()=> {if(save(imported,{recover:storageProblem}))toast('Backup restored. Welcome back.');},'Restore backup');
   } catch(error) {toast(error instanceof SyntaxError ? 'This file is not valid JSON. Your current habits have not changed.' : error.message);}
 });
+// Theme is a device preference, separate from habit backups.
+const THEME_KEY = 'steady.theme.v1';
+const systemTheme = matchMedia('(prefers-color-scheme: dark)');
+let themeChoice = null;
+try { const saved = localStorage.getItem(THEME_KEY); if (saved === 'dark' || saved === 'light') themeChoice = saved; } catch {}
+function applyTheme() {
+  const dark = (themeChoice ?? (systemTheme.matches ? 'dark' : 'light')) === 'dark';
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  const toggle = $('#theme-toggle'), label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+  toggle.replaceChildren(icon(dark ? 'sun' : 'moon')); toggle.setAttribute('aria-label',label); toggle.title = label;
+  toggle.setAttribute('aria-pressed', String(dark));
+}
+$('#theme-toggle').addEventListener('click', () => {
+  themeChoice = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem(THEME_KEY,themeChoice); } catch { toast('Theme changed for this session. Device storage is unavailable.'); }
+  applyTheme();
+});
+systemTheme.addEventListener('change', () => { if (themeChoice === null) applyTheme(); });
+applyTheme();
+
 function render() {
   hideTooltip();document.body.append($('#day-tooltip'));main.replaceChildren();main.className = '';
   $('#sidebar-name').textContent = data.nickname;$('#sidebar-avatar').textContent = data.nickname.slice(0,1).toUpperCase();$('#nav-count').textContent = data.habits.length;
@@ -374,6 +404,7 @@ function render() {
 }
 window.addEventListener('hashchange',()=> {activeTab = 'calendar';render();main.focus();window.scrollTo({top:0});});
 window.addEventListener('storage',event=> {
+  if (event.key === THEME_KEY) { themeChoice = ['dark','light'].includes(event.newValue) ? event.newValue : null; applyTheme(); return; }
   if(event.key !== STORAGE_KEY && event.key !== null)return;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);const next = raw === null ? freshData() : validateData(JSON.parse(raw));
@@ -382,6 +413,7 @@ window.addEventListener('storage',event=> {
   } catch {storageProblem = true;storageWarning('Data changed in another tab and could not be read. Your existing data has not been overwritten. Restore a backup in My space.');}
 });
 function refreshDay() {
+  const title = $('#time-greeting'); if (title) title.textContent = greeting();
   if(today() === lastDay)return;
   lastDay = today();document.querySelectorAll('dialog[open]').forEach(d=>d.close());render();toast('A new day. Your calendar is up to date.');
 }

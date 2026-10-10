@@ -15,3 +15,13 @@ Thumbs.db
 .idea/
 .vscode/
 test-results/
+
+# Local Android app, toolchain, APKs, and signing keys must never be published.
+/android/
+# Private signing material is never source, even if moved or renamed.
+*.apk
+*.aab
+*.p12
+*.jks
+*.keystore
+signing-password.txt

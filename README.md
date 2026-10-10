@@ -28,12 +28,14 @@ If the port is occupied, run `python serve.py --port 8766`. Changing the port cr
 
 ## What you can do
 
-- Create and edit habits with P1/P2/P3 priorities, six soft accent colors, and a goal length.
+- Create and edit habits with P1/P2/P3 priorities, twelve soft accent colors, and a goal length.
 - See at most two habit cards per row, with a calendar for the current month, streak, completion total, and goal date. Small screens use one column.
 - Check in for today, edit that check-in, or undo it. Historical and future days are read-only.
 - Open a habit for its calendar history and optional, repeatable to-do list. Add, edit, or remove activities and select any subset when checking in.
 - Hover, focus, or tap a calendar day to inspect its check-in. Past check-ins retain the original selected item wording even after you edit or delete a to-do item.
-- Use My space to change your local nickname, see statistics, export/import a backup, or reset all local data.
+- Use the profile icon to see “Hi nickname!”, edit your nickname with the adjacent pencil button, see statistics, export/import a backup, or reset local progress.
+- Switch between light and dark mode with the sun/moon button. Your preference stays in this browser; the initial theme follows your system setting.
+- See a greeting based on your device's local time: morning before noon, afternoon until 17:00, then evening. Navigation keeps its accessible names while displaying only icons.
 - Optionally explore with fictional sample habits from the empty state. No samples are automatically created.
 
 ## Dates and statistics
@@ -45,6 +47,8 @@ A current streak includes consecutive completed days ending today, or yesterday 
 ## Persistence and privacy
 
 Progress is automatically saved in **localStorage** under `steady.habits.v1`, associated with the exact browser origin (scheme, hostname, and port). The local profile is only an optional nickname, not an identity or account. No email address, password, real name, contact detail, location, or device identifier is requested. All application assets are local; the app makes no network requests for user data.
+
+The theme preference uses the separate key `steady.theme.v1`; habit backups do not include it. Existing habit data and version 1 backups remain supported, including all twelve accent colors. Switching themes never changes habit progress.
 
 Habit names and to-do text can still reveal personal information. Avoid sensitive content. Browser storage is plaintext and accessible to someone using your browser profile; it is not encrypted storage. Clearing site data removes progress, and private browsing may discard it on exit. Automatic saves deliberately do **not** write to the project folder: a static website cannot silently write arbitrary files, and keeping progress outside the checkout avoids accidental publication in Git. Use **My space → Export backup** to keep a portable JSON copy somewhere private, outside this repository. Import validates the entire backup before asking to replace existing progress. A failed import leaves existing data unchanged.
 
@@ -58,7 +62,7 @@ Sharing the source with friends shares only the application. Each person has an 
 - A restrictive Content Security Policy disallows network connections, inline scripts, frames, objects, and form submissions. The supplied server also sets anti-framing, MIME, referrer, cross-origin, and feature restrictions.
 - The read-only server accepts only loopback Host headers and rejects cross-site fetches. It has no directory listings and never serves the repository, backups, or arbitrary filesystem paths.
 - Saves detect conflicting writes from other tabs; quota and corrupt-storage errors are surfaced without silently overwriting saved history.
-- `.gitignore` excludes the app's standard backup filenames, private/data/backup folders, environment files, and logs. Renamed files can bypass ignore patterns, so inspect your changes before committing. No actual habit data is included in the source.
+- `.gitignore` excludes the app's standard backup filenames, private/data/backup folders, environment files, logs, local native projects, installable binaries and signing keys. Publication checks reject unexpected files, possible credential material, personal machine paths, native bridge code and unsafe HTML/code evaluation sinks. Renamed files can bypass ignore patterns, so inspect your changes before committing. No actual habit data is included in the source.
 
 This is a personal tool with browser-local storage. The hosted version serves the same static app and gives each visitor independent browser-local data. Cloudflare Pages reads `dist/_headers` to apply the Content Security Policy, anti-framing, MIME, referrer, cross-origin, and feature restrictions. The HTML policy remains as an additional fallback. Browser storage is isolated by origin, so a new Pages hostname starts with empty progress. No habits or nicknames are copied to the hosting provider during migration.
 

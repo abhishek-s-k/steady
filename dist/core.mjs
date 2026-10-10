@@ -1,5 +1,6 @@
 export const STORAGE_KEY = 'steady.habits.v1';
-export const COLORS = Object.freeze({sage: 'Sage', lavender: 'Lavender', peach: 'Peach', blue: 'Sky', rose: 'Rose', sand: 'Sand'});
+export const COLORS = Object.freeze({sage: 'Sage', lavender: 'Lavender', peach: 'Peach', blue: 'Sky', rose: 'Rose', sand: 'Sand', mint: 'Mint', teal: 'Teal', lilac: 'Lilac', butter: 'Butter', mauve: 'Mauve', slate: 'Slate'});
+export function greeting(hour = new Date().getHours()) { return hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'; }
 export const LIMITS = Object.freeze({habits: 100, todos: 100, fileBytes: 8 * 1024 * 1024});
 export function dateKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;

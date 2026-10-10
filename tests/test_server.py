@@ -46,7 +46,7 @@ class LocalServerTests(unittest.TestCase):
         self.assertEqual(content, b"")
 
     def test_files_outside_allowlist_never_serve(self):
-        for path in ("/README.md", "/.git/config", "/serve.py", "/../README.md", "/%2e%2e/README.md", "/steady-backup.json", "/data/progress.json"):
+        for path in ("/README.md", "/.git/config", "/serve.py", "/../README.md", "/%2e%2e/README.md", "/steady-backup.json", "/data/progress.json", "/private/signing-password.txt", "/private/steady-release.p12", "/android/release/steady.apk", "/.env"):
             with self.subTest(path=path):
                 self.assertEqual(self.request(path)[0], 404)
 
